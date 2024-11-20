@@ -150,14 +150,18 @@ We offer various installation alternatives, including non-Docker native installa
 
 Encountering connection issues? Our [Open WebUI Documentation](https://docs.openwebui.com/troubleshooting/) has got you covered. For further assistance and to join our vibrant community, visit the [Open WebUI Discord](https://discord.gg/5rJgQTnV4s).
 
-#### Open WebUI: Server Connection Error
+#### Open WebUI: Server Connection Error | If you run Ollama on your Host
 
-If you're experiencing connection issues, it’s often due to the WebUI docker container not being able to reach the Ollama server at 127.0.0.1:11434 (host.docker.internal:11434) inside the container . Use the `--network=host` flag in your docker command to resolve this. Note that the port changes from 3000 to 8080, resulting in the link: `http://localhost:8080`.
+If you're experiencing connection issues, it’s often due to the WebUI docker container not being able to reach the Ollama server at port 11434 (host.docker.internal:11434) inside the container . Check the Environment Variable `OLLAMA_HOST`, it is by default *127.0.0.1:11434*, change it before you run `ollama serve`. E.g. in your *Ollama service unit* -> often located at `/etc/systemd/system/ollama.service`
+```ini
+[Service]
+Environment="OLLAMA_HOST=0.0.0.0"
+```
 
 **Example Docker Command**:
 
 ```bash
-docker run -d --network=host -v open-webui:/app/backend/data -e OLLAMA_BASE_URL=http://127.0.0.1:11434 --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
 ```
 
 ### Keeping Your Docker Installation Up-to-Date
